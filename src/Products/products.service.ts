@@ -5,15 +5,20 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Products } from "../entities/products.entity";
 import { In, MoreThan, Repository } from "typeorm";
 import { ProductId } from "../Orders/dto/createOrder.dto";
+import { CategoriesService } from "src/categories/categories.service";
 
 @Injectable()
 export class ProductsService {
-    constructor(@InjectRepository(Products) private productsRepository: Repository<Products>) { }
+    constructor(@InjectRepository(Products) private productsRepository: Repository<Products>,
+        private readonly categoriesService: CategoriesService
+
+    ) { }
 
     async getProductsService(page: number, limit: number) {
         const products = await this.productsRepository.find({
             skip: (page - 1) * limit,
-            take: limit
+            take: limit,
+            relations: ['category']
         })
 
         return products
@@ -25,14 +30,25 @@ export class ProductsService {
     }
 
     async createProductService(product: CreateProductDto) {
-        const { name } = product
+        const { name, category, stock } = product
         const existingProduct = await this.productsRepository.findOneBy({ name: name })
 
         if (existingProduct) {
-            throw new Error('El producto ya existe')
+            existingProduct.stock += stock
+            return await this.productsRepository.save(existingProduct)
         }
 
-        const newProduct = this.productsRepository.create(product)
+        let productCategory = await this.categoriesService.getCategoryByNameService(category)
+
+        if (!productCategory) {
+            productCategory = await this.categoriesService.createCategoriesService({ name: category })
+        }
+
+        const newProduct = this.productsRepository.create({
+            ...product,
+            category: productCategory
+        })
+
         return await this.productsRepository.save(newProduct)
     }
 

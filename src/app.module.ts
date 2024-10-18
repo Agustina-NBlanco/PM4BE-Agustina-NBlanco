@@ -12,6 +12,7 @@ import { OrderDetailModule } from './Order-detail/order-detail.module';
 import { OrdersModule } from './Orders/orders.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { SharedModule } from './shared-module/shared-module.module';
+import { CategoriesModule } from './categories/categories.module';
 
 
 @Module({
@@ -20,7 +21,7 @@ import { SharedModule } from './shared-module/shared-module.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('postgres')
     }),
-    UserModule, ProductsModule, AuthModule, SeedModule, OrderDetailModule, OrdersModule, FileUploadModule, SharedModule],
+    UserModule, ProductsModule, AuthModule, SeedModule, OrderDetailModule, OrdersModule, FileUploadModule, SharedModule, CategoriesModule],
   controllers: [AppController],
   providers: [AppService],
 })
