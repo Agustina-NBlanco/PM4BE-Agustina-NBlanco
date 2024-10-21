@@ -18,7 +18,7 @@ export class CloudinaryService {
     async uploadFile(buffer: Buffer, originalName?: string): Promise<string> {
         const option: UploadApiOptions = {
             folder: 'upload',
-            public_id: 'originalName',
+            public_id: originalName,
             resource_type: 'auto'
         }
         return new Promise((resolve, reject) => {
