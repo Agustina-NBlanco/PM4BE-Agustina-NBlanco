@@ -77,4 +77,10 @@ export class Users {
     })
     @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
     admin: UserRole
+
+    @ApiProperty({
+        description: 'The image of the user'
+    })
+    @Column({ type: "varchar", length: 50, nullable: true })
+    imagenUrl: string
 }
