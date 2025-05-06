@@ -18,6 +18,9 @@ export const dataSourceOptions: DataSourceOptions = isProduction
         entities: ['dist/**/*.entity{.ts,.js}'],
         migrations: ['dist/migration/*{.ts,.js}'],
         synchronize: true,
+        ssl: {
+            rejectUnauthorized: false
+        },
         logging: false
     }
 
