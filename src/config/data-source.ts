@@ -14,15 +14,34 @@ export const dataSourceOptions: DataSourceOptions = isProduction
 
     ? {
         type: 'postgres',
-        url: process.env.DATABASE_URL,
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        host: process.env.DB_HOST,
+        port: Number(process.env.DB_PORT),
+        database: process.env.DB_NAME,
         entities: ['dist/**/*.entity{.ts,.js}'],
         migrations: ['dist/migration/*{.ts,.js}'],
         synchronize: true,
         ssl: {
-            rejectUnauthorized: false
+            rejectUnauthorized: true,
+            ca: process.env.SSL_CA?.split('\\n').join('\n')
         },
         logging: false
+
     }
+
+    //  {
+    //     type: 'postgres',
+    //     url: process.env.DATABASE_URL,
+    //     entities: ['dist/**/*.entity{.ts,.js}'],
+    //     migrations: ['dist/migration/*{.ts,.js}'],
+    //     synchronize: true,
+    //     ssl: {
+
+    //         rejectUnauthorized: false
+    //     },
+    //     logging: false
+    // }
 
 
     : {
