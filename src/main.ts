@@ -6,7 +6,7 @@ import { CategoriesSeed } from './seeds/categories/categories.seed';
 import { ProductsSeed } from './seeds/products/products.seed';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { UsersSeed } from './seeds/users/user.seed';
-import { keepServerAwake } from './utils/keepServerAwake';
+
 
 
 async function bootstrap() {
@@ -40,6 +40,6 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT || 3000);
 
-  keepServerAwake();
+  
 }
 bootstrap();
