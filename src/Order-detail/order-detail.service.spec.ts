@@ -3,6 +3,7 @@ import { OrderDetailService } from './order-detail.service';
 
 describe('OrderDetailService', () => {
   let service: OrderDetailService;
+
   const mockOrder = {
     price: 0,
     order: {},
@@ -11,11 +12,10 @@ describe('OrderDetailService', () => {
 
   beforeEach(async () => {
 
+
     const mockOrderDetailService: Partial<OrderDetailService> = {
       createOrderDetailService: jest.fn().mockResolvedValue(mockOrder)
-
     }
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [{
         provide: OrderDetailService,
@@ -30,8 +30,8 @@ describe('OrderDetailService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should be defined and return ar Object', async () => {
-    expect(service.createOrderDetailService).toBeDefined();
-    expect(await service.createOrderDetailService(mockOrder)).toEqual(mockOrder);
+  it('should be defined and return an object', async () => {
+    expect(service.createOrderDetailService).toBeDefined()
+    expect(await service.createOrderDetailService(mockOrder)).toEqual(mockOrder)
   })
 });

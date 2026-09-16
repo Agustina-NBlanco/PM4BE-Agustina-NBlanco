@@ -1,44 +1,53 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { UsersService } from "src/Users/users.service";
-import { signupdto } from "./dto/signup.dto";
+import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { UsersService } from "../Users/users.service";
+import { SignUpDto } from "./dto/SignUp.dto";
 import { JwtService } from "@nestjs/jwt";
-import * as bcrypt from "bcryptjs";
-import { Users } from "src/entities/users.entity";
+import * as bcrypt from 'bcryptjs'
+import { Users } from "../entities/users.entity";
 
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly userService: UsersService, private readonly jwtService: JwtService) { }
+
+    constructor(private readonly usersService: UsersService,
+        private readonly jwtService: JwtService
+    ) { }
 
     async signInService(email: string, password: string) {
-        const user = await this.userService.findUserByEmailService(email)
+
+        const user = await this.usersService.findUserByEmailService(email)
 
         if (!user) {
-            throw new UnauthorizedException('Email o contraseña incorrectos')
+            throw new UnauthorizedException('Email o contraseña incorrectos')
         }
 
         const isPasswordMatching = await bcrypt.compare(password, user.password)
 
         if (!isPasswordMatching) {
-            throw new UnauthorizedException('Email o contraseña incorrectos')
+            throw new UnauthorizedException('Email o contraseña incorrectos')
         }
 
         const token = await this.createToken(user)
+
         return { token }
-
-
-        // if (!user || user.password !== password) {
-        //     throw new UnauthorizedException('Email o contraseña incorrectos')
-        // }
-        // return true
-
-
     }
 
-    async signUpService(user: signupdto) {
-        user.password = await bcrypt.hash(user.password, 10)
+    async signUpService(user: SignUpDto) {
 
-        const newUser = await this.userService.createUserService(user)
+        const existingUser = await this.usersService.findUserByEmailService(user.email)
+
+        if (existingUser) {
+            throw new ConflictException('El email ya está registrado')
+        }
+
+        const { confirmPassword, password, ...userData } = user
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        const newUser = await this.usersService.createUserService({
+            ...userData,
+            password: hashedPassword
+        })
 
         return {
             id: newUser.id,
@@ -52,9 +61,13 @@ export class AuthService {
     }
 
     private async createToken(user: Users) {
-        const payload = { id: user.id, email: user.email, roles: user.admin}
-        const token = await this.jwtService.signAsync(payload)
-        return token
-    }
 
+        const payload = {
+            id: user.id,
+            email: user.email,
+            roles: user.admin
+        }
+
+        return await this.jwtService.signAsync(payload)
+    }
 }

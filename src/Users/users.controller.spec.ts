@@ -1,41 +1,33 @@
-import { Test, TestingModule } from "@nestjs/testing"
-import { UsersController } from "./users.controller"
-import { UsersService } from "./users.service"
-import { Users } from "src/entities/users.entity"
-import { UserRole } from "./enum/role.enum"
-import { Response } from "express"
-import { AuthGuard } from "src/Auth/AuthGuard.guard"
-import { RoleGuard } from "./roleGuard.guard"
-import { JwtService } from "@nestjs/jwt"
-
+import { Test, TestingModule } from "@nestjs/testing";
+import { UsersController } from "./users.controller";
+import { UsersService } from "./users.service";
+import { UserRole } from "./enum/role.enum";
+import { Users } from "src/entities/users.entity";
+import { AuthGuard } from "src/Auth/AuthGuard.guard";
+import { RoleGuard } from "./RoleGuard.guard";
 
 describe('UsersController', () => {
-    let controller: UsersController
-    let service: UsersService
+    let controller: UsersController;
+    let service: UsersService;
 
     const mockUser: Users = {
-        id: '3478-9875-5559',
-        name: 'Agustina Blanco',
-        email: 'agus55@gmail.com',
-        password: 'agus22@',
-        phone: '5467890786',
+        id: 'asvf-asdf-asdf-asdf',
+        name: 'Alejandro',
+        email: 'hVJ9S@example.com',
+        password: 'Password123@',
+        phone: '9832892',
         country: 'Argentina',
-        address: 'Tucuman 55',
-        city: 'Córdoba',
+        address: 'Cordoba 530',
+        city: 'Cordoba',
         orders: [],
         admin: UserRole.USER
-    }
+    };
 
     beforeEach(async () => {
+
         const mockUsersService: Partial<UsersService> = {
-            getUsersService: () => Promise.resolve([mockUser]),
-
-        }
-
-        const mockJwtService = {
-            sign: jest.fn(() => 'token'),
-            verify: jest.fn(() => ({ userId: 'asvf-asdf-asdf-asdf' }))
-        }
+            getUsersService: jest.fn().mockResolvedValue([mockUser])
+        };
 
         const mockAuthGuard = {
             canActivate: jest.fn(() => true),
@@ -46,45 +38,31 @@ describe('UsersController', () => {
         };
 
         const module: TestingModule = await Test.createTestingModule({
-
             controllers: [UsersController],
-
-            providers: [{
-                provide: UsersService,
-                useValue: mockUsersService
-            },
-            {
-                provide: JwtService,
-                useValue: mockJwtService
-
-            }
+            providers: [
+                {
+                    provide: UsersService,
+                    useValue: mockUsersService
+                }
             ],
-
-        }).overrideGuard(AuthGuard)
+        })
+            .overrideGuard(AuthGuard)
             .useValue(mockAuthGuard)
             .overrideGuard(RoleGuard)
             .useValue(mockRoleGuard)
-            .compile()
+            .compile();
 
-        controller = module.get<UsersController>(UsersController)
-
-        service = module.get<UsersService>(UsersService)
-
-    })
+        controller = module.get<UsersController>(UsersController);
+        service = module.get<UsersService>(UsersService);
+    });
 
     it('should be defined', () => {
-        expect(controller).toBeDefined()
-    })
+        expect(controller).toBeDefined();
+    });
 
-    it('should be defined and return a list of users', async () => {
-        const res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn().mockReturnThis()
-        } as unknown as Response
+    it('should return users', async () => {
+        const result = await controller.getUsersController(1, 5);
 
-        await controller.getUsersController(1, 5, res)
-        expect(res.status).toHaveBeenCalledWith(200)
-        expect(res.json).toHaveBeenCalledWith([mockUser])
-
-    })
-})
+        expect(result).toEqual([mockUser]);
+    });
+});

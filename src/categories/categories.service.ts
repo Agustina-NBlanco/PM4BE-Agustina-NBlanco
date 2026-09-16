@@ -15,7 +15,7 @@ export class CategoriesService {
         return await this.categoriesRepository.findOne({ where: { name } })
     }
 
-    async createCategoriesService(category: { name: string }) {
+    async createCategoryService(category: { name: string }) {
         return await this.categoriesRepository.save(
             this.categoriesRepository.create(category)
         )

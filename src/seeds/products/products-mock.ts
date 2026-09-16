@@ -1,5 +1,4 @@
 export const productsMock = [
-
     {
         "name": "Iphone 15",
         "description": "The best smartphone in the world",
@@ -84,6 +83,4 @@ export const productsMock = [
         "stock": 12,
         "category": "mouse"
     }
-
-
 ]

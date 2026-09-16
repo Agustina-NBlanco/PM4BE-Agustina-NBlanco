@@ -1,30 +1,23 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { OrderDetails } from "src/entities/orderDetails.entity";
-import { Orders } from "src/entities/orders.entity";
-import { Products } from "src/entities/products.entity";
-import { Users } from "src/entities/users.entity";
-import { ProductsModule } from "src/Products/products.module";
-import { UserModule } from "src/Users/users.module";
 import { OrdersController } from "./orders.controller";
 import { OrdersService } from "./orders.service";
-import { UsersService } from "src/Users/users.service";
-import { ProductsService } from "src/Products/products.service";
-import { OrderDetailService } from "../Order-detail/order-detail.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Orders } from "src/entities/orders.entity";
+import { UsersModule } from "src/Users/users.module";
+import { ProductsModule } from "src/Products/products.module";
 import { SharedModule } from "src/shared-module/shared-module.module";
-import { CategoriesModule } from "src/categories/categories.module";
+import { OrderDetailModule } from "src/Order-detail/order-detail.module";
+
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Orders, Users, OrderDetails, Products]),
-        UserModule,
-        ProductsModule,
+    imports: [TypeOrmModule.forFeature([Orders]),
         SharedModule,
-        CategoriesModule
+        UsersModule,
+        ProductsModule,
+        OrderDetailModule
     ],
-
     controllers: [OrdersController],
-    providers: [OrdersService, UsersService, ProductsService, OrderDetailService]
-
+    providers: [OrdersService],
 })
 
 export class OrdersModule { }

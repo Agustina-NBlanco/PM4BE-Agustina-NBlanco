@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './Users/users.module';
+import { UsersModule } from './Users/users.module';
 import { ProductsModule } from './Products/products.module';
 import { AuthModule } from './Auth/auth.module';
 import { globalConfig } from './config/globalconfig.config';
@@ -15,13 +15,13 @@ import { SharedModule } from './shared-module/shared-module.module';
 import { CategoriesModule } from './categories/categories.module';
 
 
+
 @Module({
   imports: [globalConfig,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('postgres')
-    }),
-    UserModule, ProductsModule, AuthModule, SeedModule, OrderDetailModule, OrdersModule, FileUploadModule, SharedModule, CategoriesModule],
+    }), UsersModule, ProductsModule, AuthModule, SeedModule, OrderDetailModule, OrdersModule, FileUploadModule, SharedModule, CategoriesModule],
   controllers: [AppController],
   providers: [AppService],
 })

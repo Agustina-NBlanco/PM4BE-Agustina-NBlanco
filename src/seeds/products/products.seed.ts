@@ -8,36 +8,41 @@ import { productsMock } from "./products-mock";
 
 @Injectable()
 export class ProductsSeed {
-    constructor(@InjectRepository(Products) private readonly productsRepository: Repository<Products>,
+    constructor(
+        @InjectRepository(Products) private readonly productsRepository: Repository<Products>,
         @InjectRepository(Categories) private readonly categoriesRepository: Repository<Categories>
-
     ) { }
 
-    async findCategoryByname(category: string) {
-        const foundCategory = this.categoriesRepository.findOne({
+    async findCategoryByName(category: string) {
+        const foundCategory = await this.categoriesRepository.findOne({
             where: { name: category }
         })
 
         if (!foundCategory) {
             throw new Error(`Category ${category} not found`)
         }
+
         return foundCategory
     }
 
+
     async seedProducts() {
-        const existingProdcutsNames = (await this.productsRepository.find()).map(product => product.name)
+        const existingProductsCount = await this.productsRepository.count()
+
+        if (existingProductsCount > 0) {
+            return
+        }
 
         for (const productData of productsMock) {
-            if (!existingProdcutsNames.includes(productData.name)) {
-                const product = new Products()
-                product.name = productData.name
-                product.description = productData.description
-                product.price = productData.price
-                product.stock = productData.stock
-                product.category = await this.findCategoryByname(productData.category)
+            const product = new Products();
 
-                await this.productsRepository.save(product)
-            }
+            product.name = productData.name;
+            product.description = productData.description;
+            product.price = productData.price;
+            product.stock = productData.stock;
+            product.category = await this.findCategoryByName(productData.category);
+
+            await this.productsRepository.save(product);
         }
     }
 }

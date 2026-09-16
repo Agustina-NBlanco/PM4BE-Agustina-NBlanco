@@ -22,12 +22,10 @@ describe('FileUploadController', () => {
         provide: FileUploadService,
         useValue: mockFileUploadService
       },
-
       {
         provide: JwtService,
         useValue: mockJwtService
       }
-
       ],
     }).compile();
 
@@ -39,6 +37,6 @@ describe('FileUploadController', () => {
   });
 
   it('should be defined', () => {
-    expect(controller.uploadFileController).toBeDefined();
+    expect(controller.uploadFileController).toBeDefined()
   })
 });

@@ -6,12 +6,14 @@ export class ImageUploadPipe implements PipeTransform {
     'image/jpeg',
     'image/jpg',
     'image/png',
-    'image/gif'
+    'image/gif',
   ]
-  private readonly maxFileSize = 204800 //200KB
+
+  private readonly maxFileSize = 204800 // 200KB
+
   transform(file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException('file not found')
+      throw new BadRequestException('File not found')
     }
 
     if (!this.allowedMimeTypes.includes(file.mimetype)) {
@@ -22,6 +24,6 @@ export class ImageUploadPipe implements PipeTransform {
       throw new BadRequestException('File too large')
     }
 
-    return file
+    return file;
   }
 }

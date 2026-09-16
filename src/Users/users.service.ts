@@ -1,59 +1,86 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDto } from "./dto/createUser.dto";
 import { UpdateUserDto } from "./dto/updateUser.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Users } from "src/entities/users.entity";
+import { Users } from "../entities/users.entity";
 import { Repository } from "typeorm";
+import * as bcrypt from 'bcryptjs'
+
 
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(Users) private readonly usersRepository: Repository<Users>) { }
 
+
     async getUsersService(page: number, limit: number) {
-        const user = await this.usersRepository.find({
+
+        const users = await this.usersRepository.find({
             skip: (page - 1) * limit,
             take: limit,
             select: ['id', 'email', 'name', 'address', 'phone', 'country', 'city', 'admin'],
         })
-        return user;
+
+        return users
     }
 
     async getUserByIdService(id: string) {
+
         const user = await this.usersRepository.findOne({
-            where: { id: id },
-            select: ['id', 'email', 'name', 'address', 'phone', 'country', 'city'],
-            relations: ['orders']
+            where: { id },
+            select: ['id', 'email', 'name', 'address', 'phone', 'country', 'city', 'admin'],
         })
+
+        if (!user) {
+            throw new NotFoundException('Usuario no encontrado')
+        }
 
         return user
     }
 
     async createUserService(user: CreateUserDto) {
-        const newUser = this.usersRepository.create(user)
-        return await this.usersRepository.save(newUser)
+        return await this.usersRepository.save(
+            this.usersRepository.create(user)
+        )
     }
 
     async updateUserService(id: string, user: UpdateUserDto) {
-        const existingUser = await this.usersRepository.findOne({ where: { id: id } })
+        const existingUser = await this.usersRepository.findOne({ where: { id } })
 
         if (!existingUser) {
-            return null
+            throw new NotFoundException('Usuario no encontrado')
         }
 
-        Object.assign(existingUser, user)
+        const userData = { ...user }
+
+        if (userData.password) {
+            userData.password = await bcrypt.hash(userData.password, 10)
+        }
+
+        Object.assign(existingUser, userData)
 
         return await this.usersRepository.save(existingUser)
     }
 
     async deleteUserService(id: string) {
-        const userToDelete = this.usersRepository.findOne({ where: { id: id } })
+
+        const userToDelete = await this.usersRepository.findOne({
+            where: { id },
+            select: ['id']
+        })
+
+        if (!userToDelete) {
+            throw new NotFoundException('Usuario no encontrado')
+        }
+
         await this.usersRepository.delete(id)
-        return userToDelete;
+
+        return userToDelete
     }
 
     async findUserByEmailService(email: string) {
+
         return await this.usersRepository.findOne({
-            where: { email: email }
+            where: { email }
         })
     }
 }

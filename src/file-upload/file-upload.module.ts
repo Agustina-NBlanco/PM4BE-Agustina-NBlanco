@@ -11,4 +11,4 @@ import { SharedModule } from 'src/shared-module/shared-module.module';
   providers: [FileUploadService, CloudinaryService],
   exports: [FileUploadService]
 })
-export class FileUploadModule { }
+export class FileUploadModule {}

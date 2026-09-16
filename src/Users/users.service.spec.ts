@@ -1,51 +1,57 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UsersService } from "./users.service"
+import { UsersService } from "./users.service";
 import { Users } from "src/entities/users.entity";
 import { UserRole } from "./enum/role.enum";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 describe('UsersService', () => {
     let service: UsersService;
+    let repository: Repository<Users>;
+
     const mockUser: Users = {
-        id: '3478-9875-5559',
-        name: 'Agustina Blanco',
-        email: 'agus55@gmail.com',
-        password: 'agus22@',
-        phone: '5467890786',
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'Alejandro',
+        email: 'hVJ9S@example.com',
+        password: 'Password123@',
+        phone: '9832892',
         country: 'Argentina',
-        address: 'Tucuman 55',
-        city: 'Córdoba',
+        address: 'Cordoba 530',
+        city: 'Cordoba',
         orders: [],
         admin: UserRole.USER
-    }
+    };
 
     beforeEach(async () => {
-        const mockUserService: Partial<UsersService> = {
-            getUsersService: () => Promise.resolve([]),
-            createUserService: () => Promise.resolve(mockUser)
-        }
+
+        const mockUsersRepository = {
+            find: jest.fn().mockResolvedValue([mockUser])
+        };
 
         const module: TestingModule = await Test.createTestingModule({
-            providers: [UsersService, {
-                provide: UsersService,
-                useValue: mockUserService
-            }]
-
+            providers: [
+                UsersService,
+                {
+                    provide: getRepositoryToken(Users),
+                    useValue: mockUsersRepository
+                }
+            ]
         }).compile();
-        service = module.get<UsersService>(UsersService)
 
-    })
+        service = module.get<UsersService>(UsersService);
+        repository = module.get<Repository<Users>>(
+            getRepositoryToken(Users)
+        );
+    });
 
     it('should be defined', () => {
-        expect(service).toBeDefined()
-    })
+        expect(service).toBeDefined();
+    });
 
-    it('should be defined and return an Array', async () => {
-        expect(service.getUsersService).toBeDefined()
-        expect(await service.getUsersService(1, 10)).toEqual([])
-    })
+    it('should return users', async () => {
+        const result = await service.getUsersService(1, 10);
 
-    it('should be defined and return an Object', async () => {
-        expect(service.createUserService).toBeDefined()
-        expect(await service.createUserService(mockUser)).toEqual(mockUser)
-    })
-}) 
+        expect(result).toEqual([mockUser]);
+    });
+
+});
