@@ -5,7 +5,7 @@ import { IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString, Length, Matc
 export class signupdto {
     @ApiProperty({
         description: 'The name of the user',
-        example: 'Agustina Blanco'
+        example: 'Juan Perez'
     })
     @IsString()
     @IsNotEmpty()
@@ -14,7 +14,7 @@ export class signupdto {
 
     @ApiProperty({
         description: 'the email of the user',
-        example: 'agustinaBlanco@gmail.com'
+        example: 'juanperez@gmail.com'
     })
     @IsEmail()
     email: string
@@ -22,7 +22,7 @@ export class signupdto {
 
     @ApiProperty({
         description: 'the password of the user',
-        example: 'AgustinaB1234@'
+        example: 'JuanPerez123@'
     })
     @IsString()
     @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,15}$/)
@@ -30,7 +30,7 @@ export class signupdto {
 
     @ApiProperty({
         description: 'the confirmPassword of the user',
-        example: 'AgustinaB1234@'
+        example: 'JuanPerez123@'
     })
     @IsString()
     @IsNotEmpty()
