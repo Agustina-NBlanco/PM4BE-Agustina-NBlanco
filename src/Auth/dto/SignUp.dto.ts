@@ -2,11 +2,10 @@ import { ApiProperty } from "@nestjs/swagger"
 import { IsString, IsNotEmpty, IsEmail, Matches, Length, IsNumberString, IsOptional } from "class-validator"
 
 
-
 export class SignUpDto {
     @ApiProperty({
         description: 'The name of the user',
-        example: 'Juan Perez',
+        example: 'Juan Perez'
     })
     @IsString()
     @IsNotEmpty()
@@ -14,61 +13,65 @@ export class SignUpDto {
     name: string
 
     @ApiProperty({
-        description: 'The email of the user',
-        example: 'juan@example.com',
+        description: 'the email of the user',
+        example: 'juanperez@gmail.com'
     })
     @IsEmail()
-    @IsNotEmpty()
     email: string
 
+
     @ApiProperty({
-        description: 'The password of the user',
-        example: 'Juan123@'
+        description: 'the password of the user',
+        example: 'JuanPerez123@'
     })
     @IsString()
-    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,15}$/)
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,15}$/)
     password: string
 
     @ApiProperty({
-        description: 'The confirm password of the user',
-        example: 'Juan123@'
+        description: 'the confirmPassword of the user',
+        example: 'JuanPerez123@'
     })
-    @IsNotEmpty()
     @IsString()
+    @IsNotEmpty()
     confirmPassword: string
 
+
     @ApiProperty({
-        description: 'The address of the user',
-        example: 'Av. Ejemplo 123'
+        description: 'the address of the user',
+        example: 'Tucuman 55'
     })
     @IsString()
-    @IsNotEmpty()
     @Length(3, 80)
     address: string
 
-    @ApiProperty({
-        description: 'The phone of the user',
-        example: '3511234567'
-    })
-    @IsNumberString()
-    @IsNotEmpty()
-    phone: string
 
     @ApiProperty({
-        description: 'The country of the user',
+        description: 'the phone of the user',
+        example: '1234567890'
+    })
+    @IsString()
+    @IsNotEmpty()
+    @IsNumberString()
+    phone: string
+
+
+    @ApiProperty({
+        description: 'the country of the user',
         example: 'Argentina'
     })
-    @IsOptional()
     @IsString()
+    @IsOptional()
     @Length(5, 20)
     country?: string
 
+
     @ApiProperty({
-        description: 'The city of the user',
+        description: 'the city of the user',
         example: 'Córdoba'
     })
-    @IsOptional()
     @IsString()
+    @IsOptional()
     @Length(5, 20)
     city?: string
 }
